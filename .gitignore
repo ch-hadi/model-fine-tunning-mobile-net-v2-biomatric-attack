@@ -2,3 +2,13 @@
 /SCUT
 /syn
 /IDIAP
+/config
+/gen
+/clFine.py
+/fineTune.py
+/model_fold_1.pth
+/model_fold_2.pth
+/model_fold_3.pth
+/model_fold_4.pth
+/model_fold_5.pth
+/use_model.py

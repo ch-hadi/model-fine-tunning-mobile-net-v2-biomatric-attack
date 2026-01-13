@@ -22,7 +22,7 @@ warnings.filterwarnings('ignore')
 class TransferLearningFeatureExtractor:
     """Extract features using pre-trained CNN models (Transfer Learning)"""
     
-    def __init__(self, model_name='VGG16', target_size=(224, 224)):
+    def __init__(self, model_name='MobileNetV2', target_size=(224, 224)):
         """
         Initialize feature extractor with pre-trained model
         
@@ -164,7 +164,7 @@ class PADEvaluator:
 class PADSystem:
     """Complete PAD system with k-NN classifier and transfer learning"""
     
-    def __init__(self, dataset_path, dataset_name='PLUS', model_name='VGG16', n_neighbors=3):
+    def __init__(self, dataset_path, dataset_name='IDIAP', model_name='MobileNetV2', n_neighbors=3):
         """
         Initialize PAD system
         
@@ -186,7 +186,7 @@ class PADSystem:
         
         # Load dataset
         print(f"\nLoading {dataset_name} dataset...")
-        if dataset_name == 'PLUS':
+        if dataset_name == 'IDIAP':
             self.data = DatasetLoader.load_plus_dataset(dataset_path)
         else:
             subset = 'cropped' if dataset_name == 'IDIAP' else 'roi'
@@ -356,9 +356,9 @@ class PADSystem:
 # Example usage
 if __name__ == "__main__":
     # Configuration
-    DATASET_PATH = r"D:\Study\image processing\PLUS"
-    DATASET_NAME = "PLUS"  # Options: 'PLUS', 'IDIAP', 'SCUT'
-    MODEL_NAME = "VGG16"   # Options: 'VGG16', 'ResNet50', 'MobileNetV2'
+    DATASET_PATH = r"D:\Study\image processing\IDIAP\full\train"
+    DATASET_NAME = "IDIAP"  # Options: 'PLUS', 'IDIAP', 'SCUT'
+    MODEL_NAME = "MobileNetV2"   # Options: 'VGG16', 'ResNet50', 'MobileNetV2'
     N_NEIGHBORS = 3
     
     # Initialize PAD system
