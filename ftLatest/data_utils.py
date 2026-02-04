@@ -49,11 +49,13 @@ def get_user_based_data(dataset_path):
     Organize data by users for proper cross-validation
     Returns: dict mapping user_id -> {'real': [...paths], 'fake': [...paths]}
     """
+    print("===>>",repr(dataset_path))
+
     real_path = os.path.join(dataset_path, 'full', 'train', 'real')
     spoof_path = os.path.join(dataset_path, 'full', 'train', 'spoof')
     
     user_data = {}
-    
+    print("path===>>>> ",real_path,spoof_path)
     # Get all users that have both real and spoof samples
     real_users = set([d for d in os.listdir(real_path) 
                       if os.path.isdir(os.path.join(real_path, d))])

@@ -16,6 +16,8 @@ from data_utils import (
 )
 
 
+
+
 def calculate_metrics(y_true, y_pred, y_scores):
     """
     Calculate PAD metrics: APCER, BPCER, ACER
@@ -280,7 +282,7 @@ def main():
     print("="*60)
     
     # Configuration
-    DATASET_PATH = "SCUT"  # CHANGE THIS TO YOUR PATH
+    DATASET_PATH = r"D:\Study\image processing lab\ipl\SCUT"  # CHANGE THIS TO YOUR PATH
     NUM_EPOCHS = 10
     BATCH_SIZE = 16
     LEARNING_RATE = 0.001
