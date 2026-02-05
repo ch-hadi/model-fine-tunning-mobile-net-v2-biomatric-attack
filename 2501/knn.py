@@ -107,7 +107,6 @@ def get_features(model, records):
 def run_step(real_data, syn_data, step_num):
     print(f"\n--- RUNNING {DATASET_NAME} STEP {step_num} (KNN) ---")
     
-    # Pre-trained Feature Extractor
     model = models.mobilenet_v2(weights='DEFAULT')
     model.classifier = nn.Identity() 
     
@@ -115,7 +114,11 @@ def run_step(real_data, syn_data, step_num):
     subjs = [r["subject"] for r in real_data]
     labels = [r["label"] for r in real_data]
     
+    # Lists to store metrics for all folds
     fold_acers = []
+    fold_apcers = []
+    fold_bpcers = []
+
     for fold, (train_idx, test_idx) in enumerate(kf.split(real_data, labels, subjs), 1):
         real_tr = [real_data[i] for i in train_idx]
         test_set = [real_data[i] for i in test_idx]
@@ -140,7 +143,6 @@ def run_step(real_data, syn_data, step_num):
             train_final = [r for r in real_tr if r["label"] == 0]
             train_final += [s for s in syn_data if s["subject"] in set(tr_subs)]
 
-        # KNN Pipeline
         X_tr, y_tr = get_features(model, train_final)
         X_te, y_te = get_features(model, test_set)
         
@@ -148,15 +150,29 @@ def run_step(real_data, syn_data, step_num):
         knn.fit(X_tr, y_tr)
         preds = knn.predict(X_te)
         
-        # Calculate ACER
+        # --- Metrics Calculation ---
         real_mask, fake_mask = (y_te == 0), (y_te == 1)
+        
+        # BPCER (Bona Fide Presentation Classification Error Rate) - Real classified as Spoof
         bpcer = np.sum(preds[real_mask] == 1) / np.sum(real_mask) if np.sum(real_mask) > 0 else 0
+        # APCER (Attack Presentation Classification Error Rate) - Spoof classified as Real
         apcer = np.sum(preds[fake_mask] == 0) / np.sum(fake_mask) if np.sum(fake_mask) > 0 else 0
-        fold_acers.append((apcer + bpcer) / 2)
-        print(f"Fold {fold} ACER: {fold_acers[-1]:.4f}")
+        # ACER (Average Classification Error Rate)
+        acer = (apcer + bpcer) / 2
+        
+        fold_apcers.append(apcer)
+        fold_bpcers.append(bpcer)
+        fold_acers.append(acer)
+        
+        print(f"Fold {fold} | APCER: {apcer:.4f} | BPCER: {bpcer:.4f} | ACER: {acer:.4f}")
 
-    print(f">> STEP {step_num} AVG ACER: {np.mean(fold_acers):.4f}")
-
+    # Final Average Results
+    print("-" * 30)
+    print(f">> STEP {step_num} FINAL RESULTS <<")
+    print(f"AVG APCER: {np.mean(fold_apcers):.4f}")
+    print(f"AVG BPCER: {np.mean(fold_bpcers):.4f}")
+    print(f"AVG ACER : {np.mean(fold_acers):.4f}")
+    print("-" * 30)
 if __name__ == "__main__":
     r_data, s_data = build_indices()
     print_loaded_images(r_data, s_data)
