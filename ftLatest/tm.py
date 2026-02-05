@@ -112,9 +112,11 @@ def train_fold_knn(fold_idx, fold_data, device, k_neighbors=3):
     # 7. Metrics Calculate karna
     metrics = calculate_metrics(y_test, y_pred, y_scores)
     
-    print(f"\nFold {fold_idx+1} Results:")
+    print(f"\n--- Fold {fold_idx+1} Metrics ---")
+    print(f"  APCER   : {metrics['apcer']:.4f}")
+    print(f"  BPCER   : {metrics['bpcer']:.4f}")
+    print(f"  ACER    : {metrics['acer']:.4f}")
     print(f"  Accuracy: {metrics['accuracy']*100:.2f}%")
-    print(f"  APCER: {metrics['apcer']:.4f}, BPCER: {metrics['bpcer']:.4f}, ACER: {metrics['acer']:.4f}")
     
     return metrics, knn, scaler
 
@@ -124,7 +126,7 @@ def main():
     print("="*60)
     
     # Configuration
-    DATASET_PATH = r"D:\Study\image processing lab\ipl\SCUT\full\train"
+    DATASET_PATH = r"D:\Study\image processing lab\ipl\SCUT"
     DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     K_VAL = 3 # KNN ke padosi (neighbors)
     
@@ -151,14 +153,23 @@ def main():
     print("OVERALL 5-FOLD RESULTS (KNN)")
     print("="*60)
     
-    for m_name in ['accuracy', 'apcer', 'bpcer', 'acer']:
-        vals = [f[m_name] for f in all_fold_results]
-        if m_name == 'accuracy':
-            print(f"Average {m_name.capitalize()}: {np.mean(vals)*100:.2f}% ± {np.std(vals)*100:.2f}%")
-        else:
-            print(f"Average {m_name.upper()}: {np.mean(vals):.4f} ± {np.std(vals):.4f}")
+    print(f"{'Metric':<10} | {'Mean (Average)':<15} | {'Std Dev (±)':<10}")
+    print("-" * 45)
 
-    print("\n✅ PROCESS COMPLETE!")
+    for m_name in ['apcer', 'bpcer', 'acer', 'accuracy']:
+        vals = [f[m_name] for f in all_fold_results]
+        mean_val = np.mean(vals)
+        std_val = np.std(vals)
+        
+        if m_name == 'accuracy':
+            name_display = "ACC"
+            print(f"{name_display:<10} | {mean_val*100:>13.2f}% | {std_val*100:>9.2f}%")
+        else:
+            name_display = m_name.upper()
+            print(f"{name_display:<10} | {mean_val:>15.4f} | {std_val:>10.4f}")
+
+    print("="*60)
+    print("✅ PROCESS COMPLETE!")
 
 if __name__ == "__main__":
     main()
