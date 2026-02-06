@@ -177,7 +177,10 @@ def run_experiment_step(real_records, syn_records, step_num):
         step_results.append(res)
         
     print(f"\n>>> FINAL SUMMARY {DATASET_NAME} STEP {step_num}:")
+    print(f"Avg APCER: {np.mean([r['apcer'] for r in step_results]):.4f}")
+    print(f"Avg BPCER: {np.mean([r['bpcer'] for r in step_results]):.4f}")
     print(f"Avg ACER: {np.mean([r['acer'] for r in step_results]):.4f}")
+    print(f"Avg ACC: {np.mean([r['accuracy'] for r in step_results]):.4f}")
 
 if __name__ == "__main__":
     real_data = build_real_index(REAL_ROOT, DATASET_NAME)
